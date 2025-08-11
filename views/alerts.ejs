@@ -1,0 +1,22 @@
+<h1>רשימת התראות</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>סוג</th>
+      <th>תיאור</th>
+      <th>כותרת</th>
+      <th>זמן</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% alerts.forEach(alert => { %>
+      <tr>
+        <td><%= alert.type %></td> //מדפיס את הערך לתוך HTML
+        <td><%= alert.description %></td>
+        <td><%= alert.title %></td>
+        <td><%= new Date(alert.timestamp).toLocaleString('he-IL') %></td>
+      </tr>
+    <% }) %> //מריץ קוד JS בלי להדפיס 
+  </tbody>
+</table>
