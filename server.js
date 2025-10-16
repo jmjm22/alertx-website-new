@@ -61,13 +61,10 @@ mongoose.connect(mongoUri)
 
 // Start server with Socket.IO
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server listening on 0.0.0.0:${PORT}`);});
-  console.log(`Open from this computer:http://localhost:${PORT}`);
-    console.log(`Open from this computer:http://192.168.1.15:${PORT}`);
-
+  console.log(`Server listening on 0.0.0.0:${PORT}`);
+  console.log(`Open from this computer: http://localhost:${PORT}`);
+  console.log(`[ENV] MONGO_URI = ${process.env.MONGO_URI}`);
+  console.log(`[ENV] PORT = ${process.env.PORT}`);
 });
-
-console.log('[ENV] MONGO_URI =', process.env.MONGO_URI);
-console.log('[ENV] PORT =', process.env.PORT);
