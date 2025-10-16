@@ -62,7 +62,8 @@ mongoose.connect(mongoUri)
 // Start server with Socket.IO
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server listening on 0.0.0.0:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server listening on 0.0.0.0:${PORT}`);});
   console.log(`Open from this computer:http://localhost:${PORT}`);
     console.log(`Open from this computer:http://192.168.1.15:${PORT}`);
 
