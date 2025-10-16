@@ -1,22 +1,287 @@
-<h1>רשימת התראות</h1>
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AlertX • רשימת התראות</title>
+  <style>
+    :root{
+      --bg:#f6f8ff; --grad-a:#e0e7ff; --grad-b:#fef3c7; --grad-c:#fee2e2;
+      --text:#0f172a; --muted:#64748b; --border:#e5e7eb;
+      --glass:rgba(255,255,255,.78); --glass-2:rgba(255,255,255,.92);
+      --shadow:0 24px 60px rgba(2,6,23,.08); --ring:0 0 0 4px rgba(37,99,235,.18);
+      --primary:#2563eb; --primary-2:#4f46e5;
+      --police:#2196f3; --fire:#ff9800; --ambulance:#e53935;
+      --thead:#f8fafc; --zebra:#fcfdff; --hover:#f9fbff;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 600px at 100% -20%, #dbeafe 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% -10%, #ede9fe 0%, transparent 60%),
+        var(--bg);
+      color:var(--text); line-height:1.55;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .container{max-width:1200px;margin:40px auto;padding:0 20px}
 
-<table>
-  <thead>
-    <tr>
-      <th>סוג</th>
-      <th>תיאור</th>
-      <th>כותרת</th>
-      <th>זמן</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% alerts.forEach(alert => { %>
-      <tr>
-        <td><%= alert.type %></td> //מדפיס את הערך לתוך HTML
-        <td><%= alert.description %></td>
-        <td><%= alert.title %></td>
-        <td><%= new Date(alert.timestamp).toLocaleString('he-IL') %></td>
-      </tr>
-    <% }) %> //מריץ קוד JS בלי להדפיס 
-  </tbody>
-</table>
+    /* Brand */
+    .brand{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      background:linear-gradient(135deg,var(--grad-a),var(--grad-b) 55%,var(--grad-c));
+      border:1px solid var(--border); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow)
+    }
+    .brand-left{display:flex;align-items:center;gap:14px}
+    .logo{
+      width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+      background:#111827;color:#fff;font-weight:900;letter-spacing:.5px;font-size:18px
+    }
+    .titlestack h1{margin:0;font-size:26px}
+    .brand-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{
+      appearance:none;border:0;cursor:pointer;padding:10px 14px;border-radius:12px;
+      color:#fff;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      box-shadow:0 10px 24px rgba(37,99,235,.25);text-decoration:none;display:inline-flex;align-items:center;gap:8px
+    }
+    .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0);opacity:.9}
+
+    /* Filters card */
+    .card{margin-top:16px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+    .toolbar{
+      display:grid;gap:10px;align-items:center;
+      grid-template-columns:1fr 190px 190px auto auto;background:var(--glass-2);
+      border:1px solid var(--border);border-radius:14px;padding:10px;backdrop-filter:blur(10px)
+    }
+    @media (max-width:900px){.toolbar{grid-template-columns:1fr 1fr}}
+    input[type="text"],select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:#fff;font-size:15px}
+    input[type="text"]:focus,select:focus{outline:none;box-shadow:var(--ring)}
+    .muted{color:var(--muted)} .nowrap{white-space:nowrap} .small{font-size:12px}
+
+    /* Table */
+    .table-wrap{margin-top:16px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
+    table{width:100%;border-collapse:separate;border-spacing:0;font-size:15px;table-layout:fixed}
+    thead th{
+      position:sticky;top:0;z-index:2;background:linear-gradient(180deg,var(--thead),#eef2ff);
+      color:#334155;text-align:center;padding:14px 10px;border-bottom:1px solid var(--border);font-weight:800
+    }
+    tbody td{text-align:center;padding:14px 10px;border-bottom:1px solid var(--border);vertical-align:top;transition:background .15s;word-wrap:break-word;overflow-wrap:anywhere}
+    tbody tr:hover td{background:var(--hover)} tbody tr:nth-child(odd) td{background:var(--zebra)}
+    .empty{padding:28px 10px !important;background:var(--thead) !important;color:var(--muted);font-size:16px}
+
+    /* Tags */
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;color:#fff;font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.15)}
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.95)}
+    .tag.police{background:radial-gradient(120% 120% at 0% 0%, #a7d8ff, var(--police) 60%)}
+    .tag.fire{background:radial-gradient(120% 120% at 0% 0%, #ffd8a6, var(--fire) 60%)}
+    .tag.ambulance{background:radial-gradient(120% 120% at 0% 0%, #ffb3ad, var(--ambulance) 60%)}
+    .status{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#1e293b;border:1px solid var(--border);font-weight:700;font-size:12px}
+
+    ul.inline{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+    ul.inline li{padding:6px 10px;border-radius:999px;background:#f1f5f9;border:1px solid var(--border);font-size:12px;font-weight:600}
+
+    /* DateTime cell */
+    .datetime-cell{display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .datetime-date{font-weight:600}
+    .datetime-time{font-size:13px;color:#475569;margin-top:4px}
+
+    /* Pagination */
+    .pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 2px}
+    .page-link{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:38px;padding:0 12px;border-radius:999px;text-decoration:none;font-weight:700;color:#0f172a;background:#fff;border:1px solid var(--border);box-shadow:0 6px 14px rgba(2,6,23,.06)}
+    .page-link:hover{transform:translateY(-1px);border-color:var(--primary)}
+    .page-link.active{color:#fff;background:linear-gradient(135deg,#22c55e,#16a34a);border-color:transparent}
+
+    /* PRINT */
+    @page{ size: A4; margin: 16mm }
+    @media print{
+      .brand,.toolbar,.cards,.pager,.btn{ display:none !important }
+      body{ background:#fff }
+      .container{ max-width:100%; margin:0; padding:0 }
+      .table-wrap{ border:none; box-shadow:none; border-radius:0; margin:0 auto; width:88% }
+      table{ font-size:11.5px }
+      thead{ display: table-header-group }
+      thead th{ background:#eef2ff !important; color:#334155 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      tbody tr{ page-break-inside: avoid }
+      .tag.police{ background:#2196f3 !important }
+      .tag.fire{ background:#ff9800 !important }
+      .tag.ambulance{ background:#e53935 !important }
+    }
+
+    body.print-mode .brand,
+    body.print-mode .toolbar,
+    body.print-mode .pager,
+    body.print-mode .btn{ display:none !important }
+    body.print-mode .table-wrap{ border:none; box-shadow:none; border-radius:0; margin:0 auto; width:88% }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Brand Header -->
+    <header class="brand" aria-label="כותרת מערכת">
+      <div class="brand-left">
+        <div class="logo" aria-hidden="true">AX</div>
+        <div class="titlestack">
+          <h1>AlertX — מרכז שליטה והתראות</h1>
+        </div>
+      </div>
+      <div class="brand-actions">
+        <button class="btn" type="button" onclick="printTable()">🖨️ הדפס דו״ח</button>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <section class="card">
+      <form class="toolbar" method="GET" action="/alerts">
+        <input type="text" name="q" placeholder="חיפוש בכותרת/תיאור" value="<%= q || '' %>" />
+        <select name="type">
+          <option value="">כל הסוגים</option>
+          <option value="police"    <%= (type==='police') ? 'selected' : '' %>>משטרה</option>
+          <option value="fire"      <%= (type==='fire') ? 'selected' : '' %>>כיבוי אש</option>
+          <option value="ambulance" <%= (type==='ambulance') ? 'selected' : '' %>>אמבולנס</option>
+        </select>
+        <select name="status">
+          <option value="">כל הסטטוסים</option>
+          <option value="new"          <%= (status==='new') ? 'selected' : '' %>>חדש</option>
+          <option value="in_progress"  <%= (status==='in_progress') ? 'selected' : '' %>>בטיפול</option>
+          <option value="resolved"     <%= (status==='resolved') ? 'selected' : '' %>>טופל</option>
+        </select>
+        <button class="btn" type="submit">🔎 סינון</button>
+        <% if (q || type || status) { %>
+          <a class="btn" href="/alerts" style="background:#ccc;color:#000;">נקה סינון</a>
+        <% } %>
+      </form>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>סוג</th>
+              <th>כותרת</th>
+              <th>תיאור</th>
+              <th>שם משתמש</th>
+              <th>טלפון</th>
+              <th>עיר</th>
+              <th>שירותים נוספים</th>
+              <th>פעולות</th>
+              <th class="nowrap">זמן</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% if (!alerts || alerts.length===0) { %>
+            <tr><td colspan="9" class="empty">אין התראות להצגה</td></tr>
+          <% } else { alerts.forEach(function(a){ var ts=a.createdAtClient||a.createdAt; %>
+            <tr>
+              <td>
+                <span class="tag <%= a.type %>">
+                  <span class="dot" aria-hidden="true"></span>
+                  <%= a.type === 'fire' ? 'כיבוי אש'
+                      : a.type === 'ambulance' ? 'אמבולנס'
+                      : a.type === 'police' ? 'משטרה'
+                      : (a.type || '-') %>
+                </span>
+                <% if (a.status && a.status!=='new') { %>
+                  <div class="small muted" style="margin-top:6px;">
+                    <span class="status">
+                      <%= a.status === 'in_progress' ? 'בטיפול'
+                          : a.status === 'resolved' ? 'טופל'
+                          : a.status %>
+                    </span>
+                  </div>
+                <% } %>
+              </td>
+
+              <td><strong><%= a.title || '-' %></strong></td>
+              <td class="muted"><%= a.description || '-' %></td>
+              <td><%= a.userName || '-' %></td>
+              <td><%= a.phone || '-' %></td>
+              <td><%= a.city || '-' %></td>
+
+              <td>
+                <% if (a.extraServices && a.extraServices.length>0) { %>
+                  <ul class="inline">
+                    <% a.extraServices.forEach(function(s){ %><li><%= s %></li><% }) %>
+                  </ul>
+                <% } else { %>-<% } %>
+              </td>
+
+              <td>
+                <% if (a.status==='new') { %>
+                  <button class="btn update-status" data-id="<%= a._id %>" style="padding:9px 14px;border-radius:10px;">בדרך</button>
+                <% } else { %>
+                  <span class="muted small"><%= a.status %></span>
+                <% } %>
+              </td>
+
+              <td class="nowrap muted">
+                <% if (ts) { 
+                     const dateObj = new Date(ts);
+                     const dateStr = dateObj.toLocaleDateString('he-IL');
+                     const timeStr = dateObj.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+                %>
+                  <div class="datetime-cell">
+                    <div class="datetime-date"><%= dateStr %></div>
+                    <div class="datetime-time"><%= timeStr %></div>
+                  </div>
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+            </tr>
+          <% }) } %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (pagination && pagination.pages && pagination.pages>1) { %>
+        <div class="card" style="margin-top:14px;">
+          <div class="pager">
+            <span class="muted">עמוד <strong><%= pagination.page %></strong> מתוך <strong><%= pagination.pages %></strong></span>
+            <div>
+              <% for (var p=1;p<=pagination.pages;p++){ var link='/alerts?page='+encodeURIComponent(String(p));
+                 if(q){link+='&q='+encodeURIComponent(q)} if(type){link+='&type='+encodeURIComponent(type)} if(status){link+='&status='+encodeURIComponent(status)} %>
+                <a href="<%= link %>" class="page-link <%= (p===pagination.page)?'active':'' %>"><%= p %></a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </section>
+  </div>
+
+  <script>
+    // Update status
+    document.querySelectorAll('.update-status').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const id = btn.dataset.id;
+        try{
+          const res = await fetch(`/api/alerts/${id}/status`,{
+            method:'PUT',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({status:'on the way'})
+          });
+          const data = await res.json();
+          if(data.success){
+            alert('הסטטוס עודכן!');
+            btn.parentElement.innerHTML = `<span class="muted small">${data.data.status}</span>`;
+          }else{
+            alert('נכשל: '+(data.error||'תקלה לא ידועה'));
+          }
+        }catch(e){
+          console.error(e);
+          alert('שגיאה בשליחת הבקשה');
+        }
+      });
+    });
+
+    // Print only the table, with same colors
+    function printTable(){
+      document.body.classList.add('print-mode');
+      window.print();
+      setTimeout(()=>document.body.classList.remove('print-mode'), 0);
+    }
+  </script>
+</body>
+</html>

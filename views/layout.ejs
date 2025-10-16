@@ -1,18 +1,110 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>AlertX - התראות</title>
+  <meta charset="UTF-8" />
+  <title><%= typeof title !== 'undefined' ? title : 'AlertX' %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial; background: #f7f7f7; padding: 20px; direction: rtl; }
-    h1 { color: #2196F3; }
-    table { width: 100%; border-collapse: collapse; background: #fff; }
-    th, td { padding: 12px; border: 1px solid #ddd; text-align: right; }
-    th { background-color: #2196F3; color: white; }
-    tr:nth-child(even) { background-color: #f2f2f2; }
+    :root {
+      --blue: #2196F3;   /* משטרה */
+      --orange: #FF9800; /* כיבוי אש */
+      --red: #E53935;    /* אמבולנס */
+      --bg: #f7f7f7;
+      --card: #fff;
+      --muted: #999;
+      --border:#e5e7eb;
+      --shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: #222;
+      direction: rtl;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+
+    /* ===== Header / Nav ===== */
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-wrap{
+      max-width: 1100px; margin: 0 auto;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      flex-wrap:wrap;
+    }
+    header h1 { margin: 0; color: var(--blue); font-size: 1.8rem; }
+    nav { display:flex; gap:12px; flex-wrap:wrap; }
+    nav a {
+      color: var(--blue);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      transition: background .15s ease, color .15s ease;
+    }
+    nav a:hover { background:#eaf4ff; }
+    nav a.active {
+      background: #eaf4ff;
+      color:#0d47a1;
+      font-weight:700;
+      box-shadow: inset 0 0 0 1px rgba(33,150,243,.25);
+    }
+
+    /* ===== Page ===== */
+    main { padding: 0 20px 24px; max-width:1100px; margin:0 auto; }
+    .card { background: var(--card); border-radius: 8px; box-shadow: var(--shadow); padding: 16px; }
+
+    /* ===== Table ===== */
+    .table-wrap { background: var(--card); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; vertical-align: top; }
+    th { background: var(--blue); color: #fff; font-weight: 600; }
+    tr:nth-child(even) { background: #fafafa; }
+    tr:hover { background: #eaf4ff; }
+    .nowrap { white-space: nowrap; }
+
+    /* ===== Tags (שמרתי את הצבעים הנכונים) ===== */
+    .tag { display: inline-block; padding: 4px 10px; border-radius: 999px; color: #fff; font-size: 0.85rem; font-weight: 700; text-transform: capitalize; }
+    .tag.police { background-color: var(--blue); }   /* משטרה */
+    .tag.fire { background-color: var(--orange); }   /* כיבוי אש */
+    .tag.ambulance { background-color: var(--red); } /* אמבולנס */
+
+    /* ===== Toolbar (אם יש בעמוד) ===== */
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
+    .toolbar input, .toolbar select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; min-width: 140px; }
+    .toolbar button { padding: 8px 14px; border: 0; border-radius: 8px; background: var(--blue); color: #fff; cursor: pointer; }
+    .toolbar button:hover { opacity: .9; }
+
+    /* ===== Print tweaks (אופציונלי) ===== */
+    @page { size: A4; margin: 16mm; }
+    @media print {
+      header { display:none !important; }
+      main { padding:0; }
+      .table-wrap { box-shadow:none; border-radius:0; }
+      table { font-size: 11.5px; }
+      thead { display: table-header-group; }
+      tr { page-break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
-  <%- body %>
+  <header>
+    <div class="header-wrap">
+      <h1><%= typeof title !== 'undefined' ? title : 'AlertX' %></h1>
+      <nav>
+        <a href="/" class="<%= (typeof currentPath!=='undefined' && currentPath==='/') ? 'active' : '' %>">דף הבית</a>
+        <a href="/alerts" class="<%= (typeof currentPath!=='undefined' && currentPath==='/alerts') ? 'active' : '' %>">התראות</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <%- body %>
+  </main>
 </body>
 </html>

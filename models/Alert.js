@@ -1,21 +1,34 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const AlertSchema = new mongoose.Schema(
+const AlertSchema = new Schema(
   {
-    type: { type: String, enum: ['police', 'fire', 'ambulance'], required: true },
-    title: { type: String, required: true, trim: true, maxlength: 120 },
+    type: { type: String, required: true, enum: ['police', 'fire', 'ambulance'] },
+    title: { type: String, required: true },
     description: { type: String, default: '' },
-    timestamp: { type: Date, default: Date.now },
-    lat: { type: Number },
-    lng: { type: Number },
-    status: { type: String, enum: ['open', 'in_progress', 'closed'], default: 'open' },
-    userId: { type: String }
+    status: { type: String, default: 'new' },
+    phone: { type: String },
+    createdAtClient: { type: Date },
+    userId: { type: String, required: true },
+    userName: { type: String }, 
+    extraServices: { type: [String], default: [] },
+    city: { type: String },// for display
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        required: true
+      },
+      coordinates: {
+        type: [Number], 
+        required: true
+      }
+    }
   },
   { timestamps: true }
 );
 
-AlertSchema.index({ createdAt: -1 });
-AlertSchema.index({ type: 1, status: 1 });
-AlertSchema.index({ title: 'text', description: 'text' });
+
+AlertSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('Alert', AlertSchema);

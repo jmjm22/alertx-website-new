@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const app = express();
 
+
 // הגדרות תצוגה
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -14,6 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // אמצעים
+// לוגים של כל בקשת HTTP שמתקבלת בשרת
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -22,6 +24,8 @@ app.use(bodyParser.json());
 const mainRoutes = require('./routes/mainRoutes');
 app.use('/', mainRoutes);
 
+
+// === הפעלת השרת ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`AlertX server running on http://localhost:${PORT}`);
